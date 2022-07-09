@@ -58,7 +58,7 @@ jobs:
         uses: actions/checkout@v3
         with: 
           repository: longavailable/longavailable.github.io
-          token: ${{ secrets.GH_TOKEN }}
+          token: ${{ secrets.PUBLICATIONS_TOKEN }}
           submodules: recursive
 
       - name: Pull & update submodules recursively
