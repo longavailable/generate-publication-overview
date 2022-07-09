@@ -1,6 +1,6 @@
 # generate-publication-overview
 
- Scripts to generate Meixiu Yu's publications for the [Jekyll](https://jekyllrb.com/) website <www.longlovemyu.com>.
+ Scripts to generate Meixiu Yu's publications for the [Jekyll](https://jekyllrb.com/) website <https://www.longlovemyu.com>.
  
  - [Google Scholar](https://scholar.google.com/),
  
