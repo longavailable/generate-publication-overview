@@ -48,3 +48,27 @@ jobs:
           git add .
           git commit -m "Update Meixiu Yu's publications from Action"
           git push --force https://$GITHUB_ACTOR:$PUBLICATIONS_TOKEN@github.com/$GITHUB_REPOSITORY.git master:publications
+          
+  update:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    
+      - name: checkout parent repo
+        uses: actions/checkout@v3
+        with: 
+          repository: longavailable/longavailable.github.io
+          token: ${{ secrets.GH_TOKEN }}
+
+      - name: Pull & update submodules recursively
+        run: |
+          git submodule update --init --recursive
+          git submodule update --recursive --remote
+          
+      - name: Commit & push
+        run: |
+          git config user.email "actions@github.com"
+          git config user.name "GitHub Actions - update submodules"
+          git add --all
+          git commit -m "Update submodules" || echo "No changes to commit"
+          git push
