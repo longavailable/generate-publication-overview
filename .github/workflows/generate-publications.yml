@@ -8,7 +8,7 @@ on:
     - cron: '8 8 8 */3 *' # runs at 8:08 UTC on 8th day of month in every 3rd month
 
 jobs:
-  build:
+  collect:
     runs-on: ubuntu-latest
     steps:
 
@@ -50,7 +50,7 @@ jobs:
           git push --force https://$GITHUB_ACTOR:$PUBLICATIONS_TOKEN@github.com/$GITHUB_REPOSITORY.git master:publications
           
   update:
-    needs: build
+    needs: collect
     runs-on: ubuntu-latest
     steps:
     
@@ -59,11 +59,10 @@ jobs:
         with: 
           repository: longavailable/longavailable.github.io
           token: ${{ secrets.GH_TOKEN }}
+          submodules: recursive
 
       - name: Pull & update submodules recursively
-        run: |
-          git submodule update --init --recursive
-          git submodule update --recursive --remote
+        run: git submodule update --recursive --remote
           
       - name: Commit & push
         run: |
