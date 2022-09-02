@@ -63,8 +63,11 @@ jobs:
 
       - name: Pull & update submodules recursively
         run: | 
-          rm -rf myCollections/_publications
-          git submodule update --recursive --remote
+          git submodule deinit -f myCollections/_publications
+          rm -rf .git/modules/myCollections/_publications
+          git rm -r myCollections/_publications
+          git submodule add -b publications https://github.com/longavailable/generate-publication-overview.git ./myCollections/_publications
+          #git submodule update --recursive --remote
           
       - name: Commit & push
         run: |
