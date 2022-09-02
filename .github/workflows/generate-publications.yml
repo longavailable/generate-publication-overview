@@ -62,7 +62,7 @@ jobs:
           submodules: recursive
 
       - name: Pull & update submodules recursively
-        run: git submodule update --init --recursive --remote
+        run: git submodule foreach git pull # git submodule update --recursive --remote
           
       - name: Commit & push
         run: |
