@@ -5,7 +5,7 @@ on:
     branches:
       - main
   schedule:
-    - cron: '8 8 8 */3 *' # runs at 8:08 UTC on 8th day of month in every 3rd month
+    - cron: '8 8 8 */1 *' # runs at 8:08 UTC on 8th day of month in every month
 
 jobs:
   collect:
