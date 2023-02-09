@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-* Updated on 2022/07/08
+* Updated on 2023/02/09
 * python3 + mongodb + github action
 **
 * Query publications information from mongodb and save to a md based a templete file
@@ -33,7 +33,8 @@ currentDate = date.today().strftime('%b-%d-%Y')
 temlateFilename = pathlib.Path(__file__).parent / 'publication-template-mongodb.md'
 
 #error records saved in mongodb raised by scholarly
-excludes = ['5 Change Assessment and Management-Impact of human activities on the flow regime of the Hanjiang']
+excludes = ['5 Change Assessment and Management-Impact of human activities on the flow regime of the Hanjiang',
+			'Kingdom 7']
 
 publications = myu.find()
 for publication in publications:
