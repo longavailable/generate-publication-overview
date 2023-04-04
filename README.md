@@ -12,5 +12,5 @@
  
  ##  Associated with
  
- [longavailable.github.io](https://github.com/longavailable/longavailable.github.io)
+ [longavailable/longavailable.github.io](https://github.com/longavailable/longavailable.github.io)
 
