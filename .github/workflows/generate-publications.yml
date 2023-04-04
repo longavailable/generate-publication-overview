@@ -1,9 +1,7 @@
 name: Collect Meixiu Yu's publications
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
   schedule:
     - cron: '8 8 8 */1 *' # runs at 8:08 UTC on 8th day of month in every month
 
