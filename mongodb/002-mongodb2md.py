@@ -34,7 +34,9 @@ temlateFilename = pathlib.Path(__file__).parent / 'publication-template-mongodb.
 
 #error records saved in mongodb raised by scholarly
 excludes = ['5 Change Assessment and Management-Impact of human activities on the flow regime of the Hanjiang',
-			'Kingdom 7']
+	    'Kingdom 7',
+	    'Kingdom',
+	   ]
 
 publications = myu.find()
 for publication in publications:
