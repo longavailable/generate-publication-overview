@@ -63,6 +63,7 @@ for publication in tqdm(result_author['publications']):
 	print(pub)
 	'''
 	if not pub['bib']['title']: continue	# No title, no publication
+	if len(re.compile(u'[^\u4e00-\u9fa5]').sub('',pub['bib']['title'])) > 0: continue	# Exclude papers in Chinese
 	
 	# extract infomation from Google Scholar
 	for field in fields:
