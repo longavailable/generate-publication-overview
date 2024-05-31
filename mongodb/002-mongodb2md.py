@@ -36,6 +36,7 @@ temlateFilename = pathlib.Path(__file__).parent / 'publication-template-mongodb.
 excludes = ['5 Change Assessment and Management-Impact of human activities on the flow regime of the Hanjiang',
 	    'Kingdom 7',
 	    'Kingdom',
+	    'Ecological environmental flow estimation for medium tidal river',
 	   ]
 
 publications = myu.find()
