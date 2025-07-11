@@ -19,6 +19,8 @@ from pymongo.server_api import ServerApi
 # https://cloud.mongodb.com/v2/626a2db4284d9e7b738d6092#clusters
 MONGODB_USERNAME = os.environ.get('MONGODB_USERNAME')
 MONGODB_PASSWORD = os.environ.get('MONGODB_PASSWORD')
+MONGODB_USERNAME = MONGODB_USERNAME if MONGODB_USERNAME else str(input('MONGODB_USERNAME:'))
+MONGODB_PASSWORD = MONGODB_PASSWORD if MONGODB_PASSWORD else str(input('MONGODB_PASSWORD:'))
 MONGODB_CONNECTION_STRING = 'mongodb://%s:%s@cluster0-shard-00-00.yq0ng.mongodb.net:27017,cluster0-shard-00-01.yq0ng.mongodb.net:27017,cluster0-shard-00-02.yq0ng.mongodb.net:27017/publication?ssl=true&replicaSet=atlas-k84fd7-shard-0&authSource=admin&retryWrites=true&w=majority' % (MONGODB_USERNAME, MONGODB_PASSWORD)
 client = MongoClient(MONGODB_CONNECTION_STRING)
 
@@ -37,6 +39,7 @@ excludes = ['5 Change Assessment and Management-Impact of human activities on th
         'Kingdom 7',
         'Kingdom',
         'Ecological environmental flow estimation for medium tidal river',
+        'Ecological environmental flow estimation for rivers with complicated hydraulic conditions vol 89 pg 357 2024',
         ]
 
 publications = myu.find()
