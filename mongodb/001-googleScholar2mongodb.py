@@ -49,15 +49,15 @@ pprint(fields)
 pprint(document0)
 '''
 
-try:
-    # search by author name, account login needed (2025/07/11)
-    authorName = 'Meixiu Yu'
-    search_author = scholarly.search_author(authorName)
-    search_author = next(search_author)
-except:
-    # search by author id
-    authorId = 'ly9d4IgAAAAJ'
-    search_author = scholarly.search_author_id(authorId)
+'''
+# search by author name, account login needed (2025/07/11)
+authorName = 'Meixiu Yu'
+search_author = scholarly.search_author(authorName)
+search_author = next(search_author)
+'''
+# search by author id
+authorId = 'ly9d4IgAAAAJ'
+search_author = scholarly.search_author_id(authorId)
 result_author = scholarly.fill(search_author)
 
 '''
