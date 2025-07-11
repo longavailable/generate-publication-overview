@@ -26,7 +26,7 @@ permalink:
 | Pages          | {pages}	   	|
 | Abstract       | {abstract}	|
 | Cited by		 | {citedby}   	|
-| Google Citations view | <https://scholar.google.com/citations?view_op=view_citation&hl=en&citation_for_view={authorPubId}>		|
+| Google Citations view | <https://scholar.google.com/citations?view%5Fop=view%5Fcitation&hl=en&citation%5Ffor%5Fview={authorPubId}>		|
 | Url  			 | <{url}>		|
 | Achive 	     | <{eprint}>	|
 
