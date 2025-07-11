@@ -74,9 +74,10 @@ for publication in tqdm(result_author['publications']):
     document = document0.copy()		# initalize the dictionary
     pub = scholarly.fill(publication)
     '''
-    print(document)
-    print(pub)
+    pprint(document)
+    pprint(pub)
     '''
+    
     if not pub['bib']['title']: continue	# No title, no publication
     if len(re.compile(u'[^\u4e00-\u9fa5]').sub('',pub['bib']['title'])) > 0: continue	# Exclude papers in Chinese
 
@@ -108,7 +109,11 @@ for publication in tqdm(result_author['publications']):
             document[field+tag] = True
         if field_tmp == 'title' and document[field]:
             document['title'] =  ' '.join(re.sub(r'[^A-za-z0-9 -]+','',document['title']).split())	# remove 'non-rgular' characters
-
+    
+    # gh对jekyll网址中的下划线'_'解析错误，用ascii码形式替换
+    for field in ['authorPubId', 'url', 'eprint']:
+        if document[field]:  document[field] = document[field].replace('_', '%5F')
+    
     # 5-word title
     document['title5'] = '-'.join(document['title'].split()[:5])	# short title
     document['title5_status'] = True
@@ -128,10 +133,17 @@ for publication in tqdm(result_author['publications']):
             document['overall'] = False	# to evaluate quickly
             break
     document['citedby_status'] = False
-
+    
+    '''
+    #pprint(document)
+    pprint(document['title5'])
+    pprint(document['authorPubId'])
+    '''
+    
     # create or update a document in the collection (meixiuyu) of database (publication)
-    dataFilter = {	'title5': document['title5'],		# a filter, add more condition if needed.
-                    'year': document['year']}
+    dataFilter = {	'authorPubId': document['authorPubId'] }
+                    #'title5': document['title5'],		# a filter, add more condition if needed.
+                    #'year': document['year']}
     #data = myu.find(dataFilter) datalen = len(list(data))
     datalen = myu.count_documents(dataFilter)
 
@@ -139,22 +151,24 @@ for publication in tqdm(result_author['publications']):
     if datalen == 0:	# no document, then create a new one
         pprint(document)
         myu.insert_one(document)
+        print('Iterm with title of "%s" in %s was created.' %(document['title'], document['year']))
     elif datalen == 1:	# exits, then update something
         data = myu.find_one(dataFilter)	# find_one return a dictionary, while find return a cursor object
+        
         if not data['overall'] or data['citedby_updated_on'] != document['citedby_updated_on']: # when overall is true, and date is today, update nothing
             for field in fields:
                 if field == 'citedby':	# update citedby infomation
-                    citedbyData = { '$set':
-                                                        {	'citedby':document['citedby'],
-                                                            'citedby_updated_on': document['citedby_updated_on']}
-                                                }
+                    citedbyData =   { '$set':
+                                        {   'citedby':document['citedby'],
+                                            'citedby_updated_on': document['citedby_updated_on']}
+                                    }
                     myu.update_one(dataFilter, citedbyData)
                     print('%s of %s in %s was updated.' %(field, document['title5'], document['year']))
-                elif not data[field+tag] and document[field+tag]:	# some tag in database is false and now we get a true data, then update it
+                elif not data[field+tag] and document[field+tag]: # some tag in database is false and now we get a true data, then update it
                     data_to_update = 	{ '$set':
-                                                            {	field: document[field],
-                                                                field+tag: True}
-                                                        }
+                                            {	field: document[field],
+                                                field+tag: True}
+                                        }
                     myu.update_one(dataFilter, data_to_update)
                     print('%s of %s in %s was updated.' %(field, document['title5'], document['year']))
         else:
