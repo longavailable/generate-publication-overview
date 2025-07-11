@@ -51,6 +51,7 @@ pprint(document0)
 
 '''
 # search by author name, account login needed (2025/07/11)
+# https://github.com/scholarly-python-package/scholarly/issues/569#issuecomment-2877662612
 authorName = 'Meixiu Yu'
 search_author = scholarly.search_author(authorName)
 search_author = next(search_author)
