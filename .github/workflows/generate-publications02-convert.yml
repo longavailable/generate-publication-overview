@@ -40,7 +40,7 @@ jobs:
           git push --force https://$GITHUB_ACTOR:$PUBLICATIONS_TOKEN@github.com/$GITHUB_REPOSITORY.git master:publications
           
   update:
-    needs: collect
+    needs: convert
     runs-on: ubuntu-latest
     steps:
     
