@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-* Updated on 2025/07/11
+* Updated on 2025/08/28
 * python3 + mongodb + github action
 **
 * Query publications information from mongodb and save to a md based a templete file
@@ -42,9 +42,12 @@ excludes = ['5 Change Assessment and Management-Impact of human activities on th
         'Ecological environmental flow estimation for rivers with complicated hydraulic conditions vol 89 pg 357 2024',
         ]
 
+excludes_pubId = [ 'ly9d4IgAAAAJ:J%5Fg5lzvAfSwC' ]
+
 publications = myu.find()
 for publication in publications:
     if publication['title'] in excludes: continue
+    if publication['authorPubId'] in excludes_pubId: continue
 
     filename = pathlib.Path.cwd() / publication['postFilename']
     filename.parent.mkdir(parents=True, exist_ok=True)	
