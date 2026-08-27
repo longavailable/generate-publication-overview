@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-* Updated on 2025/08/28
+* Updated on 2026/08/27
 * python3 + mongodb + github action
 **
 * Query publications information from mongodb and save to a md based a templete file
@@ -40,6 +40,7 @@ excludes = ['5 Change Assessment and Management-Impact of human activities on th
         'Kingdom',
         'Ecological environmental flow estimation for medium tidal river',
         'Ecological environmental flow estimation for rivers with complicated hydraulic conditions vol 89 pg 357 2024',
+        'Study on probability for rainstorm combinations during different durations in Shanghai City'
         ]
 
 excludes_pubId = [ 'ly9d4IgAAAAJ:J%5Fg5lzvAfSwC' ]
