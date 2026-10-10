@@ -17,6 +17,7 @@
 from datetime import date
 import pathlib
 import os
+import getpass
 
 from pymongo import MongoClient
 from pymongo.server_api import ServerApi
@@ -25,10 +26,17 @@ from pymongo.server_api import ServerApi
 
 # MongoDB Atlas
 # https://cloud.mongodb.com/v2/626a2db4284d9e7b738d6092#clusters
+from dotenv import load_dotenv
+# 显式指定路径：load_dotenv() 默认从「当前工作目录」找 .env，
+# 而这个脚本可能从任何目录被调用（本地终端、GitHub Actions、IDE），
+# 只有写死脚本自身所在目录才能保证读到的是同一个文件。
+load_dotenv(pathlib.Path(__file__).parent / '.env')
 MONGODB_USERNAME = os.environ.get('MONGODB_USERNAME')
 MONGODB_PASSWORD = os.environ.get('MONGODB_PASSWORD')
 MONGODB_USERNAME = MONGODB_USERNAME if MONGODB_USERNAME else str(input('MONGODB_USERNAME:'))
-MONGODB_PASSWORD = MONGODB_PASSWORD if MONGODB_PASSWORD else str(input('MONGODB_PASSWORD:'))
+# 用 getpass 而非 input()：input() 会把密码明文回显到终端，
+# 而这段脚本的运行日志容易被整段贴出来，等于主动泄露凭据。
+MONGODB_PASSWORD = MONGODB_PASSWORD if MONGODB_PASSWORD else str(getpass.getpass('MONGODB_PASSWORD:'))
 MONGODB_CONNECTION_STRING = 'mongodb+srv://%s:%s@cluster0.yq0ng.mongodb.net/' % (MONGODB_USERNAME, MONGODB_PASSWORD)
 client = MongoClient(MONGODB_CONNECTION_STRING)
 
