@@ -1,24 +1,15 @@
 name: Collect Meixiu Yu's publications
 
+# 采集已改为本地定期运行（见 mongodb/001-googleScholar2mongodb.py）。
+# GitHub 托管 runner 的 IP 段早已被 Google 识别，日志显示作者主页请求连续 403，
+# 跑满重试只会白等 7 分钟然后失败，所以这里不再设定时任务。
+# 保留本workflow 仅供必要时手动触发排查，日常流程请走本地脚本。
+
 on:
   workflow_dispatch:
-  schedule:
-    # 原为每月 8 号（间隔 30~31 天）。Atlas 免费集群 30 天零连接即自动暂停，
-    # 这个间隔太贴危险线，改成每月 1 号与 15 号（间隔 14~17 天），留足冗余。
-    - cron: '8 8 1,15 * *' # 08:08 UTC
-
-# 定时任务排队时，GitHub 会直接取消「尚未开始」的旧一轮。
-# 不加限制的话，一次卡住的任务会让后续每次运行都被静默丢弃，
-# 表现就是「日志里几个月都没有更新，但也没报错」。
-concurrency:
-  group: collect-publications
-  cancel-in-progress: false
 
 jobs:
   collect:
-    # Google Scholar 抓取会因反爬而变慢或挂起，给个硬上限，避免定时任务长时间空转。
-    # guard.py 已把 captcha 死等压到 60 秒，正常抓取 3 分钟左右，
-    # 20 分钟足够容纳偶发重试又不会让坏任务一直占着额度。
     timeout-minutes: 20
     runs-on: ubuntu-latest
     steps:
@@ -40,57 +31,7 @@ jobs:
           python -c "import scholarly; print('scholarly', scholarly.__name__, 'import OK')"
 
       - name: execute python script 001
-        continue-on-error: true
-        env: 
-          MONGODB_USERNAME: ${{ secrets.MONGODB_USERNAME }}
-          MONGODB_PASSWORD: ${{ secrets.MONGODB_PASSWORD }}
-        # Google 随时可能给 runner IP 挂 captcha，这一挂整轮就没意义了。
-        # 继续往下走：002 只读MongoDB 里的既有数据，仍能把结果发布出去，
-        # 引用数最坏就是保持上一次的值，下次采集补上。
-        run: python mongodb/001-googleScholar2mongodb.py
-
-      - name: execute python script 002
-        env: 
-          MONGODB_USERNAME: ${{ secrets.MONGODB_USERNAME }}
-          MONGODB_PASSWORD: ${{ secrets.MONGODB_PASSWORD }}
-        run: python mongodb/002-mongodb2md.py
-
-      - name: commit and push
         env:
-          PUBLICATIONS_TOKEN: ${{ secrets.PUBLICATIONS_TOKEN }}
-        run: |
-          cd publication
-          git init
-          git config user.email $GITHUB_ACTOR@users.noreply.github.com
-          git config user.name $GITHUB_ACTOR
-          git add .
-          git commit -m "Update Meixiu Yu's publications from Action"
-          git push --force https://$GITHUB_ACTOR:$PUBLICATIONS_TOKEN@github.com/$GITHUB_REPOSITORY.git master:publications
-          
-  update:
-    needs: collect
-    runs-on: ubuntu-latest
-    steps:
-    
-      - name: checkout parent repo
-        uses: actions/checkout@v6
-        with: 
-          repository: longavailable/longavailable.github.io
-          token: ${{ secrets.PUBLICATIONS_TOKEN }}
-          submodules: recursive
-
-      - name: Pull & update submodules recursively
-        run: | 
-          git submodule deinit -f myCollections/_publications
-          rm -rf .git/modules/myCollections/_publications
-          git rm -r myCollections/_publications
-          git submodule add -b publications https://github.com/longavailable/generate-publication-overview.git ./myCollections/_publications
-          #git submodule update --recursive --remote
-          
-      - name: Commit & push
-        run: |
-          git config user.email "actions@github.com"
-          git config user.name "GitHub Actions - update submodules"
-          git add --all
-          git commit -m "Update submodules" || echo "No changes to commit"
-          git push
+          MONGODB_USERNAME: ${{ secrets.MONGODB_USERNAME }}
+          MONGODB_PASSWORD: ${{ secrets.MONGODB_PASSWORD }}
+        run: python mongodb/001-googleScholar2mongodb.py

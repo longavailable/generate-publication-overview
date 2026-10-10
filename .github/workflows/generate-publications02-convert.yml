@@ -1,11 +1,22 @@
 name: Convert Meixiu Yu's publications
 
+# 数据采集（001，Google Scholar）改由本地定期运行，本仓库的 CI 不再碰 Scholar。
+# 本 workflow 只负责把 MongoDB 里的数据渲染成 md 并发布，
+# 因此它对 GitHub runner 的 IP 没有任何反爬压力，可以稳定定时执行。
+
 on:
   workflow_dispatch:
+  schedule:
+    # 每月 1 号与 15 号各跑一次（UTC 06:23），与本地采集节奏对齐
+    - cron: '23 6 1,15 * *'
+
+concurrency:
+  group: convert-publications
+  cancel-in-progress: false
 
 jobs:
   convert:
-    timeout-minutes: 30
+    timeout-minutes: 20
     runs-on: ubuntu-latest
     steps:
 
@@ -21,50 +32,81 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          python -c "import scholarly; print('scholarly import OK')"
 
-      - name: execute python script 002
-        env: 
-          MONGODB_USERNAME: ${{ secrets.MONGODB_USERNAME }}
-          MONGODB_PASSWORD: ${{ secrets.MONGODB_PASSWORD }}
-        run: python mongodb/002-mongodb2md.py
-
-      - name: commit and push
+      # 先把 publications 分支取下来：002 靠「与现有文件比对」判断引用数有没有变，
+      # 没有旧文件可比的话，每个文件都会被当成新文件重写，变更检测就失效了。
+      #
+      # 关键：必须落在 site/publication/ 下。
+      # 001 写入的 postFilename 带 'publication/' 前缀，002 用它拼路径；
+      # 而 publications 分支里 md 是直接放在根目录的（submodule 挂载点就是它）。
+      # 把分支内容放进 site/publication/，002 生成的文件才会正好落对位置。
+      - name: checkout publications branch
         env:
           PUBLICATIONS_TOKEN: ${{ secrets.PUBLICATIONS_TOKEN }}
         run: |
-          cd publication
-          git init
-          git config user.email $GITHUB_ACTOR@users.noreply.github.com
-          git config user.name $GITHUB_ACTOR
-          git add .
+          git clone --depth 1 --branch publications \
+            "https://${{ github.actor }}:$PUBLICATIONS_TOKEN@github.com/${{ github.repository }}.git" site/publication
+
+      - name: execute python script 002
+        working-directory: site
+        env:
+          MONGODB_USERNAME: ${{ secrets.MONGODB_USERNAME }}
+          MONGODB_PASSWORD: ${{ secrets.MONGODB_PASSWORD }}
+        # 输出形如「Done. 3 file(s) updated, 46 unchanged.」
+        run: python ../mongodb/002-mongodb2md.py
+
+      # 只有 md 真的变了才提交。
+      # 原实现每次都是 git init + commit --force，引用数一个没动也会提交一次，
+      # publications 分支历史里全是无信息量的噪音提交。
+      - name: commit and push only when changed
+        working-directory: site/publication
+        env:
+          PUBLICATIONS_TOKEN: ${{ secrets.PUBLICATIONS_TOKEN }}
+        run: |
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
+          git config user.name "${{ github.actor }}"
+
+          if git diff --quiet; then
+            echo "No publication changed. Skipping commit."
+            exit 0
+          fi
+
+          echo "Changes detected:"
+          git diff --stat
+          git add --all
+          # 只在确有变更时创建提交；此时一定不会为空
           git commit -m "Update Meixiu Yu's publications from Action"
-          git push --force https://$GITHUB_ACTOR:$PUBLICATIONS_TOKEN@github.com/$GITHUB_REPOSITORY.git master:publications
-          
+          git push origin publications
+
   update:
     needs: convert
     runs-on: ubuntu-latest
     steps:
-    
+
       - name: checkout parent repo
         uses: actions/checkout@v6
-        with: 
+        with:
           repository: longavailable/longavailable.github.io
           token: ${{ secrets.PUBLICATIONS_TOKEN }}
           submodules: recursive
 
       - name: Pull & update submodules recursively
-        run: | 
+        run: |
           git submodule deinit -f myCollections/_publications
           rm -rf .git/modules/myCollections/_publications
           git rm -r myCollections/_publications
           git submodule add -b publications https://github.com/longavailable/generate-publication-overview.git ./myCollections/_publications
           #git submodule update --recursive --remote
-          
+
+      # 子模块指向的 commit 没变时不要制造空提交
       - name: Commit & push
         run: |
           git config user.email "actions@github.com"
           git config user.name "GitHub Actions - update submodules"
           git add --all
-          git commit -m "Update submodules" || echo "No changes to commit"
+          if git diff --quiet --cached; then
+            echo "Submodule unchanged. Nothing to commit."
+            exit 0
+          fi
+          git commit -m "Update submodules"
           git push
