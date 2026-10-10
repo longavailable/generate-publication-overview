@@ -16,9 +16,11 @@ from tqdm import tqdm		# progress bar
 import os
 import pathlib
 import sys
+import getpass
 
-# 必须在 from scholarly import scholarly 之前应用：把 Google 反爬触发的
-# 「最长死等 7 天」改成快速失败，否则 workflow 会一直挂着而不是报错。
+# 打scholarly 的补丁：把 Google 反爬触发的「最长死等7 天」改成快速失败，
+# 并修掉每篇论文都会刷一次的 client has been closed。
+# 放在 import 之后不影响效果——补丁改的是类的属性，Python 每次调用都会重新查找。
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 from guard import apply_guards
 apply_guards()
@@ -32,8 +34,10 @@ from pymongo.server_api import ServerApi
 # https://cloud.mongodb.com/v2/626a2db4284d9e7b738d6092#clusters
 MONGODB_USERNAME = os.environ.get('MONGODB_USERNAME')
 MONGODB_PASSWORD = os.environ.get('MONGODB_PASSWORD')
+# 用 getpass 而非 input()：input() 会把密码明文回显到终端，
+# 而这段脚本的运行日志容易被整段贴出来，等于主动泄露凭据。
 MONGODB_USERNAME = MONGODB_USERNAME if MONGODB_USERNAME else str(input('MONGODB_USERNAME:'))
-MONGODB_PASSWORD = MONGODB_PASSWORD if MONGODB_PASSWORD else str(input('MONGODB_PASSWORD:'))
+MONGODB_PASSWORD = MONGODB_PASSWORD if MONGODB_PASSWORD else str(getpass.getpass('MONGODB_PASSWORD:'))
 # mongodb connection
 MONGODB_CONNECTION_STRING = 'mongodb+srv://%s:%s@cluster0.yq0ng.mongodb.net/' % (MONGODB_USERNAME, MONGODB_PASSWORD)
 client = MongoClient(MONGODB_CONNECTION_STRING)
