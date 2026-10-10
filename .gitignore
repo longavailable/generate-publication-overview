@@ -1,2 +1,8 @@
 
 */publication
+
+# Python 缓存与本地虚拟环境：跑脚本会产生，跟发布产物无关，别混进版本库
+__pycache__/
+*.py[cod]
+.venv/
+venv/

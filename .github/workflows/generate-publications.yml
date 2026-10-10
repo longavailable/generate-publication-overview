@@ -3,10 +3,21 @@ name: Collect Meixiu Yu's publications
 on:
   workflow_dispatch:
   schedule:
-    - cron: '8 8 8 */1 *' # runs at 8:08 UTC on 8th day of month in every month
+    # 原为每月 8 号（间隔 30~31 天）。Atlas 免费集群 30 天零连接即自动暂停，
+    # 这个间隔太贴危险线，改成每月 1 号与 15 号（间隔 14~17 天），留足冗余。
+    - cron: '8 8 1,15 * *' # 08:08 UTC
+
+# 定时任务排队时，GitHub 会直接取消「尚未开始」的旧一轮。
+# 不加限制的话，一次卡住的任务会让后续每次运行都被静默丢弃，
+# 表现就是「日志里几个月都没有更新，但也没报错」。
+concurrency:
+  group: collect-publications
+  cancel-in-progress: false
 
 jobs:
   collect:
+    # Google Scholar 抓取会因反爬而变慢或挂起，给个硬上限，避免定时任务长时间空转
+    timeout-minutes: 45
     runs-on: ubuntu-latest
     steps:
 
@@ -22,6 +33,9 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          # 依赖漂移是本项目最容易复现的故障（scholarly 未锁 bibtexparser 上界），
+          # 在真正抓取前先确认关键模块能导入，避免白等几十分钟才报错。
+          python -c "import scholarly; print('scholarly', scholarly.__name__, 'import OK')"
 
       - name: execute python script 001
         env: 

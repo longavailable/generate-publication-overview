@@ -1,0 +1,47 @@
+name: Keep MongoDB cluster alive
+
+# Atlas 免费集群连续 30 天零连接就会自动暂停（2025-11 起从 60 天收紧到 30 天）。
+# 每月 8 号跑的采集任务间隔正好卡在 30~31 天，一旦某个月失败或被跳过，
+# 下次运行时集群可能已经被暂停，而暂停后拒绝一切连接。
+# 这个 workflow 每周跑一次，把30 天计时器持续重置。
+#
+# 必须独立成文件：GitHub 同一仓库同一时刻只允许运行一个 workflow，
+# 若和采集任务合并，会被去重（concurrency）逻辑静默跳过，反而更危险。
+
+on:
+  workflow_dispatch:
+  schedule:
+    # 每周一、三、五各跑一次（UTC 04:07），远小于 30 天上限。
+    # GitHub 的 schedule 在非整点时段偶尔会被延迟几分钟，属正常现象。
+    - cron: '7 4 * * 1,3,5'
+
+# 保活任务必须「尽快跑完」，所以排队中的旧任务直接取消后重跑最新的那一次，
+# 避免高延迟下堆积成雪崩。
+concurrency:
+  group: mongodb-keepalive
+  cancel-in-progress: true
+
+jobs:
+  keepalive:
+    # runner 的 IP 会变，所以外层超时必须短，否则网络被拦时会白等十几分钟
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: checkout repo content
+        uses: actions/checkout@v6
+
+      - name: setup python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+
+      - name: install pymongo
+        run: pip install "pymongo==4.13.0"
+
+      - name: ping cluster
+        env:
+          MONGODB_USERNAME: ${{ secrets.MONGODB_USERNAME }}
+          MONGODB_PASSWORD: ${{ secrets.MONGODB_PASSWORD }}
+        # 失败就让job 变红：静默成功才是最坏的保活实现
+        run: python mongodb/003-keepalive.py
