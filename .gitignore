@@ -6,3 +6,8 @@ __pycache__/
 *.py[cod]
 .venv/
 venv/
+
+# 本地凭据：里面是 MongoDB 账号密码，绝不能进版本库
+.env
+*.env
+!.env.example

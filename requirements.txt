@@ -2,6 +2,9 @@ pymongo==4.13.0
 scholarly==1.7.11
 tqdm>=4.64.0
 
+# 001 读本地 .env 取MongoDB 账号密码（.env 不进版本库，靠 .env.example 说明格式）
+python-dotenv>=1.0.0,<2
+
 # scholarly 1.7.11 仍按 1.x API 写（from bibtexparser.bibdatabase import BibDatabase），
 # 但它自己的依赖声明没写上界，pip 会默认装上 bibtexparser 2.x；2.x 重构后已删除
 # bibdatabase / bparser / bwriter，导致 import scholarly 直接 ModuleNotFoundError。
