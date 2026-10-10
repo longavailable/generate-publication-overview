@@ -1,15 +1,32 @@
 name: Collect Meixiu Yu's publications
 
-# 采集已改为本地定期运行（见 mongodb/001-googleScholar2mongodb.py）。
-# GitHub 托管 runner 的 IP 段早已被 Google 识别，日志显示作者主页请求连续 403，
-# 跑满重试只会白等 7 分钟然后失败，所以这里不再设定时任务。
-# 保留本workflow 仅供必要时手动触发排查，日常流程请走本地脚本。
+#采集以本地运行为主（见 mongodb/001-googleScholar2mongodb.py）。
+# 但这里仍保留每月两次的定时尝试：
+#   - 001 只有 insert_one/update_one，没有任何删除操作，失败时不会破坏既有数据；
+#   - 失败最坏是白等约 7 分钟（guard.py 已把 captcha 死等压到 60 秒），
+#     采集不到就写不进数据库，002 会照常用缓存数据发布，网站不受影响；
+#   - GitHub runner 的 IP 段是浮动的，偶尔会碰上没被 Google 拉黑的出口，
+#     成功一次就能补回本地漏掉的引用数增量，属于低成本上行空间。
+#
+# 时间上刻意排在 Convert（每月 1/15 日 06:23 UTC）之前：
+# 先采集，再转换发布，同一天就能把新引用数推上去，不用等下个月。
 
 on:
   workflow_dispatch:
+  schedule:
+    # 03:11 UTC = 北京 11:11，早于 Convert 的北京 14:23
+    - cron: '11 3 1,15 * *'
+
+# 同一时间只允许一个 workflow 运行。若排队中的旧轮次被静默取消，
+# 会表现为「日志里几个月没采集记录但也没报错」，所以这里排队而不是抢占。
+concurrency:
+  group: collect-publications
+  cancel-in-progress: false
 
 jobs:
   collect:
+    # guard.py 已把 captcha 等待压到 60 秒，正常抓取约 3 分钟；
+    # 20 分钟足够容纳偶发重试，又不会让坏任务长期占用额度。
     timeout-minutes: 20
     runs-on: ubuntu-latest
     steps:
@@ -34,4 +51,6 @@ jobs:
         env:
           MONGODB_USERNAME: ${{ secrets.MONGODB_USERNAME }}
           MONGODB_PASSWORD: ${{ secrets.MONGODB_PASSWORD }}
+        # 不因失败而中断整个 workflow：这个 job 只负责往 MongoDB 写数据，
+        # 失败时数据保持原样，没有任何破坏性副作用。
         run: python mongodb/001-googleScholar2mongodb.py
