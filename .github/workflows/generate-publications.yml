@@ -16,8 +16,10 @@ concurrency:
 
 jobs:
   collect:
-    # Google Scholar 抓取会因反爬而变慢或挂起，给个硬上限，避免定时任务长时间空转
-    timeout-minutes: 45
+    # Google Scholar 抓取会因反爬而变慢或挂起，给个硬上限，避免定时任务长时间空转。
+    # guard.py 已把 captcha 死等压到 60 秒，正常抓取 3 分钟左右，
+    # 20 分钟足够容纳偶发重试又不会让坏任务一直占着额度。
+    timeout-minutes: 20
     runs-on: ubuntu-latest
     steps:
 
@@ -38,9 +40,13 @@ jobs:
           python -c "import scholarly; print('scholarly', scholarly.__name__, 'import OK')"
 
       - name: execute python script 001
+        continue-on-error: true
         env: 
           MONGODB_USERNAME: ${{ secrets.MONGODB_USERNAME }}
           MONGODB_PASSWORD: ${{ secrets.MONGODB_PASSWORD }}
+        # Google 随时可能给 runner IP 挂 captcha，这一挂整轮就没意义了。
+        # 继续往下走：002 只读MongoDB 里的既有数据，仍能把结果发布出去，
+        # 引用数最坏就是保持上一次的值，下次采集补上。
         run: python mongodb/001-googleScholar2mongodb.py
 
       - name: execute python script 002

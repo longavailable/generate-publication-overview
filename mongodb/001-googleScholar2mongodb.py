@@ -14,6 +14,14 @@ from datetime import date
 from pprint import pprint
 from tqdm import tqdm		# progress bar
 import os
+import pathlib
+import sys
+
+# 必须在 from scholarly import scholarly 之前应用：把 Google 反爬触发的
+# 「最长死等 7 天」改成快速失败，否则 workflow 会一直挂着而不是报错。
+sys.path.insert(0, str(pathlib.Path(__file__).parent))
+from guard import apply_guards
+apply_guards()
 
 from pymongo import MongoClient
 from pymongo.server_api import ServerApi
@@ -72,7 +80,13 @@ print(len(result_author['publications']))
 
 for publication in tqdm(result_author['publications']):
     document = document0.copy()		# initalize the dictionary
-    pub = scholarly.fill(publication)
+    # 单篇被反爬拦截时只跳过这一篇，不让整轮采集前功尽弃：
+    # 引用数是唯一会随时间变化的字段，漏掉几篇下次会补上。
+    try:
+        pub = scholarly.fill(publication)
+    except Exception as e:
+        print('WARN: skip one publication (%s: %s)' % (type(e).__name__, e))
+        continue
     '''
     pprint(document)
     pprint(pub)
