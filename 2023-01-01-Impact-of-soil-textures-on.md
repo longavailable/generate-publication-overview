@@ -25,7 +25,7 @@ Soil moisture is an important indicator for monitoring agricultural drought, and
 | Issue          | /	   	|
 | Pages          | 130257	   	|
 | Abstract       | Soil moisture is an important indicator for monitoring agricultural drought, and is closely related to soil texture. However, the role that soil textures play in agricultural drought evolution in humid climates is not well understood. In the study, we systematically assessed the feasibility of the Soil Water Deficit Index (SWDI) for agricultural drought monitoring in humid regions, examined the impact of soil texture and groundwater depth on agricultural drought evolution, and estimated the field holding capacity for different soil textures in humid areas based on a large-scale regional soil moisture monitoring network. The results show that: (1) The SWDI has reasonably good performance in detecting severe and extreme agricultural drought, but it tends to overestimate the drought intensity during non-severe/extreme drought periods in humid regions, particularly for clay soils. (2) Sand soils are more prone to agricultural drought …	|
-| Cited by		 | 43 (Updated on Oct-10-2026)   	|
+| Cited by		 | 46 (Updated on Oct-10-2026)   	|
 | Google Citations view | <https://scholar.google.com/citations?view%5Fop=view%5Fcitation&hl=en&citation%5Ffor%5Fview=ly9d4IgAAAAJ:NMxIlDl6LWMC>		|
 | Url  			 | <https://www.sciencedirect.com/science/article/pii/S002216942301199X>		|
 | Achive 	     | </>	|
