@@ -25,7 +25,7 @@ Human activities both aggravate and alleviate streamflow drought. Here we show t
 | Issue          | 4	   	|
 | Pages          | 044059	   	|
 | Abstract       | Human activities both aggravate and alleviate streamflow drought. Here we show that aggravation is dominant in contrasting cases around the world analysed with a consistent methodology. Our 28 cases included different combinations of human-water interactions. We found that water abstraction aggravated all drought characteristics, with increases of 20%–305% in total time in drought found across the case studies, and increases in total deficit of up to almost 3000%. Water transfers reduced drought time and deficit by up to 97%. In cases with both abstraction and water transfers into the catchment or augmenting streamflow from groundwater, the water inputs could not compensate for the aggravation of droughts due to abstraction and only shift the effects in space or time. Reservoir releases for downstream water use alleviated droughts in the dry season, but also led to deficits in the wet season by changing flow …	|
-| Cited by		 | 110 (Updated on Oct-10-2026)   	|
+| Cited by		 | 111 (Updated on Oct-15-2026)   	|
 | Google Citations view | <https://scholar.google.com/citations?view%5Fop=view%5Fcitation&hl=en&citation%5Ffor%5Fview=ly9d4IgAAAAJ:%5Fkc%5FbZDykSQC>		|
 | Url  			 | <https://iopscience.iop.org/article/10.1088/1748-9326/ac5def/meta>		|
 | Achive 	     | <https://iopscience.iop.org/article/10.1088/1748-9326/ac5def/pdf>	|

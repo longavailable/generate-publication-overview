@@ -25,7 +25,7 @@ The proliferation of large-scale cascade reservoir systems constitutes a profoun
 | Issue          | /	   	|
 | Pages          | 134633	   	|
 | Abstract       | The proliferation of large-scale cascade reservoir systems constitutes a profound and lasting form of anthropogenic forcing on global riverine ecosystems. This investigation scrutinizes the ramifications of the operational dynamics of four colossal cascade reservoirs situated on the Lower Jinsha River, with respect to their downstream hydrological and water temperature regimes. An integrated hydro-thermal model based on the Long Short-Term Memory deep learning method was constructed to accurately simulate the natural streamflow and water temperature processes during the period of reservoir operation, then the systematic disturbance patterns and intrinsic attributions of the giant cascade reservoir operations on the river’s natural hydrological and thermal regimes were comprehensively assessed. Results revealed: (1) Hydrological and thermal regimes responded divergently to cascade expansion …	|
-| Cited by		 | 3 (Updated on Oct-10-2026)   	|
+| Cited by		 | 4 (Updated on Oct-15-2026)   	|
 | Google Citations view | <https://scholar.google.com/citations?view%5Fop=view%5Fcitation&hl=en&citation%5Ffor%5Fview=ly9d4IgAAAAJ:2P1L%5FqKh6hAC>		|
 | Url  			 | <https://www.sciencedirect.com/science/article/pii/S0022169425019730>		|
 | Achive 	     | </>	|

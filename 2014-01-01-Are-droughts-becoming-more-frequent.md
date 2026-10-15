@@ -25,7 +25,7 @@ The Standardized Precipitation Evapotranspiration Index (SPEI) was computed base
 | Issue          | 3	   	|
 | Pages          | 545-558	   	|
 | Abstract       | The Standardized Precipitation Evapotranspiration Index (SPEI) was computed based on the monthly precipitation and air temperature values at 609 locations over China during the period 1951–2010.Various characteristics of drought across China were examined including: long‐term trends, percentage of area affected, intensity, duration, and drought frequency. The results revealed that severe and extreme droughts have become more serious since late 1990s for all of China (with dry area increasing by ∼3.72% per decade); and persistent multi‐year severe droughts were more frequent in North China, Northeast China, and western Northwest China; significant drying trends occurred over North China, the southwest region of Northeast China, central and eastern regions of Northwest China, the central and southwestern parts of Southwest China and southwestern and northeastern parts of western Northwest …	|
-| Cited by		 | 688 (Updated on Oct-10-2026)   	|
+| Cited by		 | 689 (Updated on Oct-15-2026)   	|
 | Google Citations view | <https://scholar.google.com/citations?view%5Fop=view%5Fcitation&hl=en&citation%5Ffor%5Fview=ly9d4IgAAAAJ:5nxA0vEk-isC>		|
 | Url  			 | <https://rmets.onlinelibrary.wiley.com/doi/abs/10.1002/joc.3701>		|
 | Achive 	     | <https://rmets.onlinelibrary.wiley.com/doi/full/10.1002/joc.3701>	|
